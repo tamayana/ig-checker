@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IG Checker - AI Tama</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:system-ui;padding:15px}
+.head{text-align:center;padding:25px;background:linear-gradient(135deg,#833AB4,#FD1D1D,#FCB045);border-radius:20px}
+.head h1{font-weight:900;letter-spacing:1px}
+.card{background:#111;border:1px solid #222;padding:18px;border-radius:16px;margin:15px 0}
+input{width:100%;background:#1a1a1a;border:1px dashed #333;padding:14px;border-radius:12px;color:#888;margin:8px 0}
+button{background:linear-gradient(135deg,#833AB4,#FD1D1D);border:none;color:#fff;padding:14px;width:100%;border-radius:12px;font-weight:bold}
+.tab{display:flex;gap:8px;margin:10px 0}
+.tab button{background:#222;flex:1}
+.tab button.active{background:#FD1D1D}
+.user{display:flex;justify-content:space-between;padding:12px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:10px;margin:6px 0}
+.user a{color:#fff;text-decoration:none;font-weight:bold}
+.list{max-height:450px;overflow-y:auto}
+</style>
+</head>
+<body>
+
+<div class="head">
+<h1>IG CHECKER - AI TAMA</h1>
+<p style="font-size:12px;margin-top:6px">100% Offline • Tanpa Login • File JSON</p>
+</div>
+
+<div class="card">
+<b>Cara ambil file JSON bung:</b>
+<p style="font-size:12px;color:#aaa;margin:8px 0;line-height:1.6">
+1. Buka IG -> Setting -> Accounts Centre -> Your information -> Download your information<br>
+2. Pilih akun IG lu -> Pilih JSON, Date Range All Time<br>
+3. Request download, tunggu email, extract ZIP nya<br>
+4. Cari file <b>following.json</b> dan <b>followers_1.json</b> di folder connections/followers_and_following
+</p>
+<input type="file" id="f1" accept=".json"><small>Upload following.json</small>
+<input type="file" id="f2" accept=".json"><small>Upload followers_1.json atau followers.json</small>
+<button onclick="proses()" style="margin-top:12px">CEK SEKARANG 🔍</button>
+</div>
+
+<div class="card" id="hasil" style="display:none">
+<div class="tab">
+<button id="t1" class="active" onclick="showTab(1)">Gak Follback Lu (<span id="c1">0</span>)</button>
+<button id="t2" onclick="showTab(2)">Gak Lu Follback (<span id="c2">0</span>)</button>
+</div>
+<div class="list" id="list"></div>
+</div>
+
+<script>
+let following=[], followers=[];
+
+document.getElementById('f1').addEventListener('change', e=>{ let r=new FileReader(); r.onload=ev=>{ following=extract(ev.target.result); alert('following ok: '+following.length); }; r.readAsText(e.target.files[0]); });
+document.getElementById('f2').addEventListener('change', e=>{ let r=new FileReader(); r.onload=ev=>{ followers=extract(ev.target.result); alert('followers ok: '+followers.length); }; r.readAsText(e.target.files[0]); });
+
+function extract(text){
+ let j=JSON.parse(text); let arr=[];
+ if(j.relationships_following) arr=j.relationships_following.map(x=>x.string_list_data[0].value);
+ else if(j.relationships_followers) arr=j.relationships_followers.map(x=>x.string_list_data[0].value);
+ else if(Array.isArray(j)) arr=j.map(x=> x.string_list_data ? x.string_list_data[0].value : x.title || x.value);
+ return arr.map(u=>typeof u==='string'?u:u.toString()).filter(Boolean);
+}
+
+let dataA=[], dataB=[];
+
+function proses(){
+ if(following.length==0 || followers.length==0){ alert('Upload dua file dulu bung!'); return; }
+ let setFollowers = new Set(followers);
+ let setFollowing = new Set(following);
+ 
+ dataA = following.filter(u=> !setFollowers.has(u)); // lu follow dia, dia gak follow lu
+ dataB = followers.filter(u=> !setFollowing.has(u)); // dia follow lu, lu gak follow dia
+
+ document.getElementById('hasil').style.display='block';
+ document.getElementById('c1').textContent = dataA.length;
+ document.getElementById('c2').textContent = dataB.length;
+ showTab(1);
+}
+
+function showTab(n){
+ document.getElementById('t1').classList.toggle('active', n==1);
+ document.getElementById('t2').classList.toggle('active', n==2);
+ let data = n==1 ? dataA : dataB;
+ let html="";
+ data.forEach(u=>{
+   html+=`<div class="user"><a href="https://instagram.com/${u}" target="_blank">@${u}</a><span>${n==1?'Gak Follback':'Lu Gak Follback'}</span></div>`;
+ });
+ document.getElementById('list').innerHTML = html || "<p style='color:#888;padding:20px;text-align:center'>Kosong bung, semua aman!</p>";
+}
+</script>
+</body>
+</html>
