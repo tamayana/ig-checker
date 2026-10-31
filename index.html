@@ -3,138 +3,174 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IG Checker - AI TAMA</title>
+<title>IG Checker - Followers Tracker</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif}
-body{background:#0f0f0f;color:#fff;min-height:100vh;padding:20px}
-.container{max-width:600px;margin:0 auto}
-h1{text-align:center;margin:20px 0;font-size:28px}
-.subtitle{text-align:center;color:#aaa;margin-bottom:30px}
-.card{background:#1a1a1a;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #2a2a2a}
-.label{font-weight:600;margin-bottom:10px;display:block}
-input[type=file]{width:100%;padding:12px;background:#252525;border:1px dashed #444;border-radius:10px;color:#fff;cursor:pointer}
-input[type=file]::file-selector-button{background:#fff;color:#000;border:none;padding:8px 16px;border-radius:8px;font-weight:600;margin-right:12px;cursor:pointer}
-.status{margin-top:8px;font-size:13px;color:#888}
-.status.ok{color:#4ade80}
-.btn{width:100%;padding:16px;background:#fff;color:#000;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px}
-.btn:disabled{background:#333;color:#666;cursor:not-allowed}
-.results{margin-top:20px;display:none}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.stat{background:#1a1a1a;border-radius:12px;padding:16px;text-align:center;border:1px solid #2a2a2a}
-.stat-num{font-size:28px;font-weight:800}
-.stat-label{font-size:12px;color:#aaa;margin-top:4px}
-.list-card{background:#1a1a1a;border-radius:16px;padding:16px;margin-bottom:16px;border:1px solid #2a2a2a}
-.list-title{font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between}
-.user-list{max-height:400px;overflow-y:auto}
-.user-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #222}
-.user-item a{color:#fff;text-decoration:none;font-weight:500}
-.badge{font-size:11px;padding:4px 8px;background:#252525;border-radius:20px;color:#aaa}
-.empty{text-align:center;padding:40px 20px;color:#666}
-.error{background:#2a1a1a;border:1px solid #5a2a2a;color:#ff8a8a;padding:12px;border-radius:10px;margin-top:10px;font-size:13px;display:none}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+body{background:#0a0a12;color:#fff;min-height:100vh;padding:15px}
+.upload-box{background:#16162a;border:1px dashed #3a3a6a;border-radius:16px;padding:20px;text-align:center;margin-bottom:15px}
+.upload-box h2{font-size:18px;margin-bottom:12px}
+input[type=file]{background:#1f1f3d;border:1px solid #333;padding:10px;border-radius:10px;width:100%;margin-top:8px;color:#fff}
+.status{font-size:12px;margin-top:6px}
+.ok{color:#4ade80}.err{color:#ff6b6b}
+button.main{width:100%;padding:16px;background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;border-radius:14px;color:#fff;font-weight:800;font-size:16px;margin-top:12px;cursor:pointer}
+button:disabled{opacity:0.4}
+.dashboard{display:none}
+.top-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}
+.card{background:linear-gradient(135deg,#1e1b4b,#2e1065);border:1px solid #3a2a7a;border-radius:16px;padding:14px;position:relative}
+.card.pink{background:linear-gradient(135deg,#4a1a4a,#6b215c)}
+.card.blue{background:linear-gradient(135deg,#1e293b,#334155)}
+.card h4{font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:0.5px}
+.card h2{font-size:26px;margin:6px 0 2px}
+.card p{font-size:11px;opacity:0.6}
+.card .icon{position:absolute;right:12px;top:12px;font-size:20px;opacity:0.3}
+.tabs{display:flex;gap:8px;margin:18px 0;overflow-x:auto;padding-bottom:5px}
+.tab{padding:10px 18px;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:20px;font-size:13px;white-space:nowrap;cursor:pointer}
+.tab.active{background:#7c3aed;border-color:#7c3aed;font-weight:700}
+.list{background:#131326;border-radius:16px;overflow:hidden;border:1px solid #222244}
+.item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #1f1f3a}
+.item:last-child{border:none}
+.left{display:flex;align-items:center;gap:10px}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.info .name{font-weight:600;font-size:14px}
+.info .sub{font-size:11px;opacity:0.5;margin-top:2px}
+.right a{color:#7c3aed;font-size:12px;text-decoration:none;font-weight:600;background:#1e1b4b;padding:6px 12px;border-radius:12px}
+.header-analytics{text-align:center;padding:10px 0 5px;font-weight:800;font-size:16px;background:linear-gradient(90deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 </style>
 </head>
 <body>
-<div class="container">
-<h1>🔍 IG Checker</h1>
-<p class="subtitle">Cek siapa yang gak follback lu - 100% Akurat</p>
-<div class="card">
-<label class="label">1. Upload following.json</label>
-<input type="file" id="followingInput" accept=".json">
-<div class="status" id="followingStatus">Belum ada file</div>
+
+<div id="uploadSection">
+<div class="upload-box">
+<h2>📂 Upload Data IG Lu</h2>
+<div style="text-align:left;margin-top:10px"><b>following.json</b><input type="file" id="f1" accept=".json"><div id="s1" class="status">belum upload</div></div>
+<div style="text-align:left;margin-top:12px"><b>followers_1.json</b><input type="file" id="f2" accept=".json"><div id="s2" class="status">belum upload</div></div>
+<button id="btn" class="main" disabled>Upload 2 File Dulu Bung</button>
+</div>
+</div>
+
+<div id="dashboard" class="dashboard">
+<div class="header-analytics">Follower Analytics for Instagram</div>
+
+<div class="top-cards">
+<div class="card" style="grid-column:span 2">
+<div class="icon">💔</div>
+<h4>Not Following You Back</h4>
+<h2 id="cNotBack">0</h2>
+<p>Dia gak follback lu</p>
+</div>
+<div class="card pink">
+<div class="icon">🫵</div>
+<h4>You Not Following Back</h4>
+<h2 id="cYouNot">0</h2>
+<p>Lu gak follback dia</p>
+</div>
+<div class="card blue">
+<div class="icon">🤝</div>
+<h4>Mutual Followers</h4>
+<h2 id="cMutual">0</h2>
+<p>Saling follow</p>
 </div>
 <div class="card">
-<label class="label">2. Upload followers_1.json</label>
-<input type="file" id="followersInput" accept=".json">
-<div class="status" id="followersStatus">Belum ada file</div>
+<h4>Followers</h4>
+<h2 id="cFollowers">0</h2>
 </div>
-<div class="error" id="errorBox"></div>
-<button class="btn" id="checkBtn" disabled>Upload 2 file dulu bung!</button>
-<div class="results" id="results">
-<div class="stats">
-<div class="stat"><div class="stat-num" id="followingCount">0</div><div class="stat-label">Following</div></div>
-<div class="stat"><div class="stat-num" id="followersCount">0</div><div class="stat-label">Followers</div></div>
-<div class="stat"><div class="stat-num" id="notFollbackCount" style="color:#f87171">0</div><div class="stat-label">Gak Follback Lu</div></div>
-<div class="stat"><div class="stat-num" id="notFollowedCount" style="color:#60a5fa">0</div><div class="stat-label">Gak Lu Follback</div></div>
-</div>
-<div class="list-card">
-<div class="list-title">😤 Gak Follback Lu <span id="notFollbackLabel">0 akun</span></div>
-<div class="user-list" id="notFollbackList"></div>
-</div>
-<div class="list-card">
-<div class="list-title">🤔 Gak Lu Follback <span id="notFollowedLabel">0 akun</span></div>
-<div class="user-list" id="notFollowedList"></div>
+<div class="card">
+<h4>Following</h4>
+<h2 id="cFollowing">0</h2>
 </div>
 </div>
+
+<div class="tabs">
+<div class="tab active" data-tab="notback">Not Following You Back</div>
+<div class="tab" data-tab="younot">You Not Following Back</div>
+<div class="tab" data-tab="mutual">Mutual (1046 style)</div>
 </div>
+
+<div class="list" id="list"></div>
+<div style="margin-top:12px;text-align:center"><button id="exportBtn" style="background:#1e1b4b;border:1px solid #3a2a7a;color:#fff;padding:10px 20px;border-radius:12px">Export List</button></div>
+</div>
+
 <script>
-let followingSet=new Set(),followersSet=new Set();
-function extractUser(item){
- if(!item)return null;
- let u=null;
- if(item.title&&item.title.trim()!==''&&!item.title.includes(' '))u=item.title.trim();
- else if(item.string_list_data&&item.string_list_data[0]){
-  const d=item.string_list_data[0];
-  if(d.value&&d.value.trim()!=='')u=d.value.trim();
-  else if(d.href){const p=d.href.split('/').filter(Boolean);u=p[p.length-1]||null;if(u&&u.startsWith('_u/'))u=u.replace('_u/','');}
- }
- if(!u)return null;
- u=u.toLowerCase().trim();
- if(u.length<1||u.length>50)return null;
- return u;
+let data = {following:new Map(), followers:new Map()}
+function extract(o){
+  if(!o) return null;
+  let href = o.string_list_data?.[0]?.href || '';
+  let m = href.match(/instagram\.com\/([^\/\?\s]+)/i);
+  if(m) return {user:m[1].toLowerCase(), time:o.string_list_data[0].timestamp||0, href}
+  if(o.title && o.title.trim() && !o.title.includes(' ')) return {user:o.title.trim().toLowerCase(), time:o.string_list_data?.[0]?.timestamp||0, href}
+  let v = o.string_list_data?.[0]?.value || '';
+  if(v && !v.includes(' ') && v.length<30) return {user:v.trim().toLowerCase(), time:o.string_list_data[0].timestamp||0, href}
+  return null;
 }
-function parseJsonData(data){
- let raw=[];
- if(Array.isArray(data))raw=data;
- else if(data&&typeof data==='object'){
-  if(Array.isArray(data.relationships_following))raw=data.relationships_following;
-  else if(Array.isArray(data.relationships_followers))raw=data.relationships_followers;
-  else{for(const k in data){if(Array.isArray(data[k])){raw=data[k];break;}}}
- }
- const map=new Map();
- for(const it of raw){const u=extractUser(it);if(u&&!map.has(u))map.set(u,u);}
- return map;
+async function read(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=e=>{try{res(JSON.parse(e.target.result))}catch{rej('json rusak')}};r.onerror=()=>rej('gagal');r.readAsText(f)})}
+function parse(json, type){
+  let arr = Array.isArray(json)? json : (json.relationships_following||json.relationships_followers||Object.values(json).find(v=>Array.isArray(v))||[]);
+  let map=new Map();
+  for(let it of arr){
+    let ex=extract(it);
+    if(ex && ex.user) map.set(ex.user, ex);
+  }
+  return map;
 }
-async function readFile(file){
- return new Promise((res,rej)=>{
-  const r=new FileReader();
-  r.onload=e=>{try{res(JSON.parse(e.target.result));}catch{rej('JSON rusak');}};
-  r.onerror=()=>rej('Gagal baca file');
-  r.readAsText(file);
+function fmtDate(ts){
+ if(!ts) return 'following since -';
+ let d=new Date(ts*1000);
+ return `following since ${d.toLocaleDateString('id-ID')}`;
+}
+let els={f1:document.getElementById('f1'),f2:document.getElementById('f2'),s1:document.getElementById('s1'),s2:document.getElementById('s2'),btn:document.getElementById('btn')};
+els.f1.addEventListener('change',async e=>{
+ let j=await read(e.target.files[0]); data.following=parse(j,'following');
+ els.s1.innerHTML=`<span class="ok">✓ ${data.following.size} akun kebaca</span>`; check();
+});
+els.f2.addEventListener('change',async e=>{
+ let j=await read(e.target.files[0]); data.followers=parse(j,'followers');
+ els.s2.innerHTML=`<span class="ok">✓ ${data.followers.size} akun kebaca</span>`; check();
+});
+function check(){
+ if(data.following.size && data.followers.size){
+  els.btn.disabled=false; els.btn.innerText='ANALISA SEKARANG BUNG 🚀';
+ }
+}
+let currentList=[];
+function render(type){
+ let listEl=document.getElementById('list');
+ let items=[];
+ if(type==='notback') items=[...data.following.keys()].filter(u=>!data.followers.has(u)).map(u=>data.following.get(u));
+ if(type==='younot') items=[...data.followers.keys()].filter(u=>!data.following.has(u)).map(u=>data.followers.get(u));
+ if(type==='mutual') items=[...data.following.keys()].filter(u=>data.followers.has(u)).map(u=>data.following.get(u));
+ currentList=items;
+ listEl.innerHTML=items.map((it,i)=>`
+ <div class="item">
+  <div class="left">
+   <div class="avatar">${it.user[0].toUpperCase()}</div>
+   <div class="info"><div class="name">@${it.user}</div><div class="sub">${fmtDate(it.time)}</div></div>
+  </div>
+  <div class="right"><a href="https://instagram.com/${it.user}" target="_blank">Lihat</a></div>
+ </div>`).join('') || '<div style="padding:20px;text-align:center;opacity:0.5">Kosong bung, aman!</div>';
+}
+els.btn.addEventListener('click',()=>{
+ let notBack=[...data.following.keys()].filter(u=>!data.followers.has(u));
+ let youNot=[...data.followers.keys()].filter(u=>!data.following.has(u));
+ let mutual=[...data.following.keys()].filter(u=>data.followers.has(u));
+ document.getElementById('cNotBack').innerText=notBack.length;
+ document.getElementById('cYouNot').innerText=youNot.length;
+ document.getElementById('cMutual').innerText=mutual.length;
+ document.getElementById('cFollowers').innerText=data.followers.size;
+ document.getElementById('cFollowing').innerText=data.following.size;
+ document.getElementById('uploadSection').style.display='none';
+ document.getElementById('dashboard').style.display='block';
+ render('notback');
+});
+document.querySelectorAll('.tab').forEach(t=>{
+ t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  render(t.dataset.tab);
  });
-}
-function updateBtn(){
- const b=document.getElementById('checkBtn');
- const f=followingSet.size>0, fo=followersSet.size>0;
- if(f&&fo){b.disabled=false;b.textContent='🔍 CEK SEKARANG';}
- else{b.disabled=true;if(!f&&!fo)b.textContent='Upload 2 file dulu bung!';else if(!f)b.textContent='Upload following.json dulu!';else b.textContent='Upload followers_1.json dulu!';}
-}
-document.getElementById('followingInput').addEventListener('change',async e=>{
- const file=e.target.files[0];const s=document.getElementById('followingStatus');const err=document.getElementById('errorBox');
- if(!file)return;
- try{const d=await readFile(file);const m=parseJsonData(d);followingSet=new Set(m.keys());s.textContent=`✓ ${file.name} - ${followingSet.size} following terbaca`;s.className='status ok';err.style.display='none';}
- catch(er){s.textContent=`✗ Error: ${er}`;s.className='status';err.textContent=`Error following.json: ${er}`;err.style.display='block';followingSet=new Set();}
- updateBtn();
 });
-document.getElementById('followersInput').addEventListener('change',async e=>{
- const file=e.target.files[0];const s=document.getElementById('followersStatus');const err=document.getElementById('errorBox');
- if(!file)return;
- try{const d=await readFile(file);const m=parseJsonData(d);followersSet=new Set(m.keys());s.textContent=`✓ ${file.name} - ${followersSet.size} followers terbaca`;s.className='status ok';err.style.display='none';}
- catch(er){s.textContent=`✗ Error: ${er}`;s.className='status';err.textContent=`Error followers_1.json: ${er}`;err.style.display='block';followersSet=new Set();}
- updateBtn();
-});
-document.getElementById('checkBtn').addEventListener('click',()=>{
- const notF=[...followingSet].filter(x=>!followersSet.has(x)).sort();
- const notFo=[...followersSet].filter(x=>!followingSet.has(x)).sort();
- document.getElementById('followingCount').textContent=followingSet.size;
- document.getElementById('followersCount').textContent=followersSet.size;
- document.getElementById('notFollbackCount').textContent=notF.length;
- document.getElementById('notFollowedCount').textContent=notFo.length;
- document.getElementById('notFollbackLabel').textContent=`${notF.length} akun`;
- document.getElementById('notFollowedLabel').textContent=`${notFo.length} akun`;
- const a=document.getElementById('notFollbackList'),b=document.getElementById('notFollowedList');
- a.innerHTML=notF.length===0?'<div class="empty">🔥 Mantap bung, semua follback lu!</div>':notF.map(u=>`<div class="user-item"><a href="https://instagram.com/${u}" target="_blank">@${u}</a><span class="badge">cek</span></div>`).join('');
- b.innerHTML=notFo.length===0?'<div class="empty">Semua followers udah lu follback</div>':notFo.map(u=>`<div class="user-item"><a href="https://instagram.com/${u}" target="_blank">@${u}</a><span class="badge">cek</span></div>`).join('');
- document.getElementById('results').style.display='block';
+document.getElementById('exportBtn').addEventListener('click',()=>{
+ let txt=currentList.map(i=>`@${i.user} - https://instagram.com/${i.user}`).join('\n');
+ let blob=new Blob([txt],{type:'text/plain'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ig-list.txt'; a.click();
 });
 </script>
 </body>
