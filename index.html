@@ -3,91 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IG Checker - AI Tama</title>
+<title>IG Checker - AI TAMA</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#fff;font-family:system-ui;padding:15px}
-.head{text-align:center;padding:25px;background:linear-gradient(135deg,#833AB4,#FD1D1D,#FCB045);border-radius:20px}
-.head h1{font-weight:900;letter-spacing:1px}
-.card{background:#111;border:1px solid #222;padding:18px;border-radius:16px;margin:15px 0}
-input{width:100%;background:#1a1a1a;border:1px dashed #333;padding:14px;border-radius:12px;color:#888;margin:8px 0}
-button{background:linear-gradient(135deg,#833AB4,#FD1D1D);border:none;color:#fff;padding:14px;width:100%;border-radius:12px;font-weight:bold}
-.tab{display:flex;gap:8px;margin:10px 0}
-.tab button{background:#222;flex:1}
-.tab button.active{background:#FD1D1D}
-.user{display:flex;justify-content:space-between;padding:12px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:10px;margin:6px 0}
-.user a{color:#fff;text-decoration:none;font-weight:bold}
-.list{max-height:450px;overflow-y:auto}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif}
+body{background:#0f0f0f;color:#fff;min-height:100vh;padding:20px}
+.container{max-width:600px;margin:0 auto}
+h1{text-align:center;margin:20px 0;font-size:28px}
+.subtitle{text-align:center;color:#aaa;margin-bottom:30px}
+.card{background:#1a1a1a;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #2a2a2a}
+.label{font-weight:600;margin-bottom:10px;display:block}
+input[type=file]{width:100%;padding:12px;background:#252525;border:1px dashed #444;border-radius:10px;color:#fff;cursor:pointer}
+input[type=file]::file-selector-button{background:#fff;color:#000;border:none;padding:8px 16px;border-radius:8px;font-weight:600;margin-right:12px;cursor:pointer}
+.status{margin-top:8px;font-size:13px;color:#888}
+.status.ok{color:#4ade80}
+.btn{width:100%;padding:16px;background:#fff;color:#000;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px}
+.btn:disabled{background:#333;color:#666;cursor:not-allowed}
+.results{margin-top:20px;display:none}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.stat{background:#1a1a1a;border-radius:12px;padding:16px;text-align:center;border:1px solid #2a2a2a}
+.stat-num{font-size:28px;font-weight:800}
+.stat-label{font-size:12px;color:#aaa;margin-top:4px}
+.list-card{background:#1a1a1a;border-radius:16px;padding:16px;margin-bottom:16px;border:1px solid #2a2a2a}
+.list-title{font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between}
+.user-list{max-height:400px;overflow-y:auto}
+.user-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #222}
+.user-item a{color:#fff;text-decoration:none;font-weight:500}
+.badge{font-size:11px;padding:4px 8px;background:#252525;border-radius:20px;color:#aaa}
+.empty{text-align:center;padding:40px 20px;color:#666}
+.error{background:#2a1a1a;border:1px solid #5a2a2a;color:#ff8a8a;padding:12px;border-radius:10px;margin-top:10px;font-size:13px;display:none}
 </style>
 </head>
 <body>
-
-<div class="head">
-<h1>IG CHECKER - AI TAMA</h1>
-<p style="font-size:12px;margin-top:6px">100% Offline • Tanpa Login • File JSON</p>
-</div>
-
+<div class="container">
+<h1>🔍 IG Checker</h1>
+<p class="subtitle">Cek siapa yang gak follback lu - 100% Akurat</p>
 <div class="card">
-<b>Cara ambil file JSON bung:</b>
-<p style="font-size:12px;color:#aaa;margin:8px 0;line-height:1.6">
-1. Buka IG -> Setting -> Accounts Centre -> Your information -> Download your information<br>
-2. Pilih akun IG lu -> Pilih JSON, Date Range All Time<br>
-3. Request download, tunggu email, extract ZIP nya<br>
-4. Cari file <b>following.json</b> dan <b>followers_1.json</b> di folder connections/followers_and_following
-</p>
-<input type="file" id="f1" accept=".json"><small>Upload following.json</small>
-<input type="file" id="f2" accept=".json"><small>Upload followers_1.json atau followers.json</small>
-<button onclick="proses()" style="margin-top:12px">CEK SEKARANG 🔍</button>
+<label class="label">1. Upload following.json</label>
+<input type="file" id="followingInput" accept=".json">
+<div class="status" id="followingStatus">Belum ada file</div>
 </div>
-
-<div class="card" id="hasil" style="display:none">
-<div class="tab">
-<button id="t1" class="active" onclick="showTab(1)">Gak Follback Lu (<span id="c1">0</span>)</button>
-<button id="t2" onclick="showTab(2)">Gak Lu Follback (<span id="c2">0</span>)</button>
+<div class="card">
+<label class="label">2. Upload followers_1.json</label>
+<input type="file" id="followersInput" accept=".json">
+<div class="status" id="followersStatus">Belum ada file</div>
 </div>
-<div class="list" id="list"></div>
+<div class="error" id="errorBox"></div>
+<button class="btn" id="checkBtn" disabled>Upload 2 file dulu bung!</button>
+<div class="results" id="results">
+<div class="stats">
+<div class="stat"><div class="stat-num" id="followingCount">0</div><div class="stat-label">Following</div></div>
+<div class="stat"><div class="stat-num" id="followersCount">0</div><div class="stat-label">Followers</div></div>
+<div class="stat"><div class="stat-num" id="notFollbackCount" style="color:#f87171">0</div><div class="stat-label">Gak Follback Lu</div></div>
+<div class="stat"><div class="stat-num" id="notFollowedCount" style="color:#60a5fa">0</div><div class="stat-label">Gak Lu Follback</div></div>
 </div>
-
+<div class="list-card">
+<div class="list-title">😤 Gak Follback Lu <span id="notFollbackLabel">0 akun</span></div>
+<div class="user-list" id="notFollbackList"></div>
+</div>
+<div class="list-card">
+<div class="list-title">🤔 Gak Lu Follback <span id="notFollowedLabel">0 akun</span></div>
+<div class="user-list" id="notFollowedList"></div>
+</div>
+</div>
+</div>
 <script>
-let following=[], followers=[];
-
-document.getElementById('f1').addEventListener('change', e=>{ let r=new FileReader(); r.onload=ev=>{ following=extract(ev.target.result); alert('following ok: '+following.length); }; r.readAsText(e.target.files[0]); });
-document.getElementById('f2').addEventListener('change', e=>{ let r=new FileReader(); r.onload=ev=>{ followers=extract(ev.target.result); alert('followers ok: '+followers.length); }; r.readAsText(e.target.files[0]); });
-
-function extract(text){
- let j=JSON.parse(text); let arr=[];
- if(j.relationships_following) arr=j.relationships_following.map(x=>x.string_list_data[0].value);
- else if(j.relationships_followers) arr=j.relationships_followers.map(x=>x.string_list_data[0].value);
- else if(Array.isArray(j)) arr=j.map(x=> x.string_list_data ? x.string_list_data[0].value : x.title || x.value);
- return arr.map(u=>typeof u==='string'?u:u.toString()).filter(Boolean);
+let followingSet=new Set(),followersSet=new Set();
+function extractUser(item){
+ if(!item)return null;
+ let u=null;
+ if(item.title&&item.title.trim()!==''&&!item.title.includes(' '))u=item.title.trim();
+ else if(item.string_list_data&&item.string_list_data[0]){
+  const d=item.string_list_data[0];
+  if(d.value&&d.value.trim()!=='')u=d.value.trim();
+  else if(d.href){const p=d.href.split('/').filter(Boolean);u=p[p.length-1]||null;if(u&&u.startsWith('_u/'))u=u.replace('_u/','');}
+ }
+ if(!u)return null;
+ u=u.toLowerCase().trim();
+ if(u.length<1||u.length>50)return null;
+ return u;
 }
-
-let dataA=[], dataB=[];
-
-function proses(){
- if(following.length==0 || followers.length==0){ alert('Upload dua file dulu bung!'); return; }
- let setFollowers = new Set(followers);
- let setFollowing = new Set(following);
- 
- dataA = following.filter(u=> !setFollowers.has(u)); // lu follow dia, dia gak follow lu
- dataB = followers.filter(u=> !setFollowing.has(u)); // dia follow lu, lu gak follow dia
-
- document.getElementById('hasil').style.display='block';
- document.getElementById('c1').textContent = dataA.length;
- document.getElementById('c2').textContent = dataB.length;
- showTab(1);
+function parseJsonData(data){
+ let raw=[];
+ if(Array.isArray(data))raw=data;
+ else if(data&&typeof data==='object'){
+  if(Array.isArray(data.relationships_following))raw=data.relationships_following;
+  else if(Array.isArray(data.relationships_followers))raw=data.relationships_followers;
+  else{for(const k in data){if(Array.isArray(data[k])){raw=data[k];break;}}}
+ }
+ const map=new Map();
+ for(const it of raw){const u=extractUser(it);if(u&&!map.has(u))map.set(u,u);}
+ return map;
 }
-
-function showTab(n){
- document.getElementById('t1').classList.toggle('active', n==1);
- document.getElementById('t2').classList.toggle('active', n==2);
- let data = n==1 ? dataA : dataB;
- let html="";
- data.forEach(u=>{
-   html+=`<div class="user"><a href="https://instagram.com/${u}" target="_blank">@${u}</a><span>${n==1?'Gak Follback':'Lu Gak Follback'}</span></div>`;
+async function readFile(file){
+ return new Promise((res,rej)=>{
+  const r=new FileReader();
+  r.onload=e=>{try{res(JSON.parse(e.target.result));}catch{rej('JSON rusak');}};
+  r.onerror=()=>rej('Gagal baca file');
+  r.readAsText(file);
  });
- document.getElementById('list').innerHTML = html || "<p style='color:#888;padding:20px;text-align:center'>Kosong bung, semua aman!</p>";
 }
+function updateBtn(){
+ const b=document.getElementById('checkBtn');
+ const f=followingSet.size>0, fo=followersSet.size>0;
+ if(f&&fo){b.disabled=false;b.textContent='🔍 CEK SEKARANG';}
+ else{b.disabled=true;if(!f&&!fo)b.textContent='Upload 2 file dulu bung!';else if(!f)b.textContent='Upload following.json dulu!';else b.textContent='Upload followers_1.json dulu!';}
+}
+document.getElementById('followingInput').addEventListener('change',async e=>{
+ const file=e.target.files[0];const s=document.getElementById('followingStatus');const err=document.getElementById('errorBox');
+ if(!file)return;
+ try{const d=await readFile(file);const m=parseJsonData(d);followingSet=new Set(m.keys());s.textContent=`✓ ${file.name} - ${followingSet.size} following terbaca`;s.className='status ok';err.style.display='none';}
+ catch(er){s.textContent=`✗ Error: ${er}`;s.className='status';err.textContent=`Error following.json: ${er}`;err.style.display='block';followingSet=new Set();}
+ updateBtn();
+});
+document.getElementById('followersInput').addEventListener('change',async e=>{
+ const file=e.target.files[0];const s=document.getElementById('followersStatus');const err=document.getElementById('errorBox');
+ if(!file)return;
+ try{const d=await readFile(file);const m=parseJsonData(d);followersSet=new Set(m.keys());s.textContent=`✓ ${file.name} - ${followersSet.size} followers terbaca`;s.className='status ok';err.style.display='none';}
+ catch(er){s.textContent=`✗ Error: ${er}`;s.className='status';err.textContent=`Error followers_1.json: ${er}`;err.style.display='block';followersSet=new Set();}
+ updateBtn();
+});
+document.getElementById('checkBtn').addEventListener('click',()=>{
+ const notF=[...followingSet].filter(x=>!followersSet.has(x)).sort();
+ const notFo=[...followersSet].filter(x=>!followingSet.has(x)).sort();
+ document.getElementById('followingCount').textContent=followingSet.size;
+ document.getElementById('followersCount').textContent=followersSet.size;
+ document.getElementById('notFollbackCount').textContent=notF.length;
+ document.getElementById('notFollowedCount').textContent=notFo.length;
+ document.getElementById('notFollbackLabel').textContent=`${notF.length} akun`;
+ document.getElementById('notFollowedLabel').textContent=`${notFo.length} akun`;
+ const a=document.getElementById('notFollbackList'),b=document.getElementById('notFollowedList');
+ a.innerHTML=notF.length===0?'<div class="empty">🔥 Mantap bung, semua follback lu!</div>':notF.map(u=>`<div class="user-item"><a href="https://instagram.com/${u}" target="_blank">@${u}</a><span class="badge">cek</span></div>`).join('');
+ b.innerHTML=notFo.length===0?'<div class="empty">Semua followers udah lu follback</div>':notFo.map(u=>`<div class="user-item"><a href="https://instagram.com/${u}" target="_blank">@${u}</a><span class="badge">cek</span></div>`).join('');
+ document.getElementById('results').style.display='block';
+});
 </script>
 </body>
 </html>
